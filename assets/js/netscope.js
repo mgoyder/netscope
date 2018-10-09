@@ -16188,7 +16188,9 @@ module.exports = Analyzer = class Analyzer {
           d.comp.macc = (kernel_w * kernel_h) * (d.wOut * d.hOut) * d.chIn * d.chOut * d.batchOut / group;
           //memory
           d.mem.param = (kernel_w * kernel_h) * d.chIn * d.chOut / group + has_bias * d.chOut;
-          d.mem.activation = (d.wOut * d.hOut) * d.chOut * d.batchOut;
+		  d.mem.activation = (d.wOut * d.hOut) * d.chOut * d.batchOut;
+		  d.kernel_w = kernel_w; // 
+		  d.kernel_h = kernel_h; // 
           // CACHE AND BANDWIDTH for Implementation Variants
           if (do_variants_analysis) {
             d.variants.push({
@@ -18983,7 +18985,7 @@ module.exports = Renderer = class Renderer {
           }
         }
       }
-      id++;
+	  id++;	  
       entry = {
         ID: id,
         name: n.name,
@@ -18992,10 +18994,14 @@ module.exports = Renderer = class Renderer {
         ch_in: n.analysis.chIn,
         dim_in: n.analysis.wIn + 'x' + n.analysis.hIn,
         ch_out: n.analysis.chOut,
-        dim_out: n.analysis.wOut + 'x' + n.analysis.hOut,
+		dim_out: n.analysis.wOut + 'x' + n.analysis.hOut,
+		kernel_size: n.analysis.kernel_w + 'x' + n.analysis.kernel_h, // 
         ops_raw: n.analysis.comp,
-        mem_raw: n.analysis.mem
-      };
+		mem_raw: n.analysis.mem,
+	  };
+	  if( (typeof n.analysis.kernel_w == 'undefined') || (typeof n.analysis.kernel_h == 'undefined') ) {
+		entry.kernel_size = "N/A";
+	  }
       if (do_variants_analysis) {
         entry.implementations = n.analysis.variants;
       }
@@ -19055,7 +19061,8 @@ module.exports = Renderer = class Renderer {
         entry.name = n.name.substring(0, slashindex);
         entry.type = 'submodule(' + num_subs + ')';
         entry.ch_out = n.ch_out;
-        entry.dim_out = n.dim_out;
+		entry.dim_out = n.dim_out;
+		entry.kernel_size = n.kernel_size;
         for (key in entry.ops_raw) {
           entry.ops_raw[key] += n.ops_raw[key];
         }
@@ -19089,12 +19096,13 @@ module.exports = Renderer = class Renderer {
           ch_in: n.ch_in,
           dim_in: n.dim_in,
           ch_out: n.ch_out,
-          dim_out: n.dim_out,
+		  dim_out: n.dim_out,
+		  kernel_size: n.kernel_size, // 
           ops_raw: _.extend({}, n.ops_raw),
           mem_raw: _.extend({}, n.mem_raw),
           ops: {},
           mem: {}
-        };
+		};
         ref2 = entry.ops_raw;
         for (key in ref2) {
           val = ref2[key];
@@ -19155,7 +19163,7 @@ module.exports = Renderer = class Renderer {
     })();
     return summary_without_raw;
   }
-
+// 
   renderTable() {
     var $node_elem, $table_elem, areatbl, detail, dim_in, entry, j, k, len, len1, line, ref, ref1, ref2, ref3, ref4, row, row_array, scroll_to, suffix, summary, summary_body, summary_table;
     // Generate Detail Table and Summary
@@ -19212,7 +19220,8 @@ module.exports = Renderer = class Renderer {
         line["macc " + suffix] = ((ref3 = entry.ops_raw) != null ? ref3.macc : void 0) > 0 ? entry.ops_raw.macc : "";
         line["param " + suffix] = ((ref4 = entry.mem_raw) != null ? ref4.param : void 0) > 0 ? entry.mem_raw.param : "";
         line["ch_out " + suffix] = entry.ch_out;
-        line["width " + suffix] = dim_in;
+		line["width " + suffix] = dim_in;
+		line["kernel_size " + suffix] = entry.kernel_size;
         areatbl.push(line);
       }
       $(Tableify(areatbl)).appendTo(this.table);
