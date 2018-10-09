@@ -16710,7 +16710,7 @@ module.exports = AppController = class AppController {
   }
 
   completeLoading(net, loader) {
-    var editlink, extendlink;
+    var editlink, extendlink, chartlink;
     this.$spinner.hide();
     $('#net-title').html(net.name.replace(/_/g, ' '));
     $('title').text(net.name.replace(/_/g, ' ') + ' — Netscope CNN Analyzer');
@@ -16725,13 +16725,12 @@ module.exports = AppController = class AppController {
     $('.qtip').remove();
     this.renderer = new Renderer(net, this.svg, this.table);
     if (!window.do_variants_analysis) {
-      $("<br>").appendTo(this.table);
       extendlink = $('<a>Excel-compatible Analysis Results (experimental)</a>');
       extendlink.click(() => {
         window.do_variants_analysis = true;
         return this.renderer.renderTable();
       });
-      extendlink.appendTo(this.table);
+	  extendlink.appendTo(this.table);
     }
     return this.inProgress = false;
   }
@@ -19224,7 +19223,9 @@ module.exports = Renderer = class Renderer {
 		line["kernel_size " + suffix] = entry.kernel_size;
         areatbl.push(line);
       }
-      $(Tableify(areatbl)).appendTo(this.table);
+	  $(Tableify(areatbl)).appendTo(this.table);
+	//   $("<br><br><p>Test</p>").appendTo(this.table); //GOYDER
+	$('<br><br><a href="../../pie_chart_gen_conv_goyder.xlsx"> Copy-paste this data into this spreadsheet for visualization. <br> <img src="../assets/img/excel_icon.png" alt="Click to download helper spreadsheet" width="150" height="150"> </a>').appendTo(this.table);
     }
     return null;
   }
