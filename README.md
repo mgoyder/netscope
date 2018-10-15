@@ -10,6 +10,9 @@ This fork adds analysis capabilities, enabling the computation of network comple
 ### Documentation
 - Netscope [Quick Start Guide](http://mgoyder.github.io/netscope/quickstart.html)
 
+### Summarizatino Helper
+- Download file pie_chart_gen_conv_goyder.xlsx to easily compute distribution chart. Make sure you adjust the chart range.
+
 ### Demo
 - :new: [Visualization of ZynqNet CNN](http://mgoyder.github.io/netscope/#/preset/zynqnet)
 - [Visualization of the Deep Convolutional Neural Network "SqueezeNet"](http://mgoyder.github.io/netscope/#/preset/squeezenet)
